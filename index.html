@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Javi Ofertas · Catálogo</title>
+<meta name="description" content="Productos nuevos a buen precio. Envíos a toda Bolivia. Pide por WhatsApp.">
+<meta property="og:title" content="Javi Ofertas · Catálogo">
+<meta property="og:description" content="Productos nuevos a buen precio. Pide por WhatsApp.">
+<meta property="og:image" content="https://javiermejia1.github.io/catalogo/logo.webp">
+<meta property="og:url" content="https://javiermejia1.github.io/catalogo/">
+<meta name="theme-color" content="#373B44">
+<link rel="icon" href="logo.webp">
+<style>
+  :root {
+    --naranja: #FF904E;
+    --naranja-oscuro: #E8742F;
+    --negro: #373B44;
+    --gris: #6B7280;
+    --fondo: #F6F5F3;
+    --tarjeta: #FFFFFF;
+    --borde: #E7E4E0;
+    --verde-wa: #25D366;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fondo);
+    color: var(--negro);
+  }
+  button { font: inherit; cursor: pointer; }
+
+  /* Encabezado fijo: logo, buscador y categorías */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--tarjeta);
+    border-bottom: 1px solid var(--borde);
+  }
+  .fila-logo {
+    display: flex; align-items: center; gap: 12px;
+    max-width: 1200px; margin: 0 auto; padding: 10px 16px 8px;
+  }
+  .fila-logo img { height: 44px; width: auto; }
+  .fila-logo .total { margin-left: auto; color: var(--gris); font-size: 14px; }
+  .buscador { max-width: 1200px; margin: 0 auto; padding: 0 16px 8px; }
+  .buscador input {
+    width: 100%; padding: 11px 14px; font-size: 16px;
+    border: 2px solid var(--borde); border-radius: 12px;
+    background: var(--fondo); color: var(--negro); outline: none;
+  }
+  .buscador input:focus { border-color: var(--naranja); background: #fff; }
+  .categorias { max-width: 1200px; margin: 0 auto; padding: 0 16px 10px; }
+  .categorias select {
+    width: 100%; padding: 10px 40px 10px 14px; font-size: 16px; font-weight: 600;
+    border: 2px solid var(--negro); border-radius: 12px; color: var(--negro);
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    /* Flecha naranja dibujada a la derecha */
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23FF904E' stroke-width='2.5' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center;
+  }
+  .categorias select:focus { outline: none; border-color: var(--naranja); }
+  /* En pantallas anchas: buscador y categorías en la misma fila */
+  @media (min-width: 760px) {
+    .filtros { display: flex; gap: 12px; max-width: 1200px; margin: 0 auto; padding: 0 16px 10px; }
+    .filtros .buscador, .filtros .categorias { padding: 0; margin: 0; }
+    .filtros .buscador { flex: 2; }
+    .filtros .categorias { flex: 1; }
+  }
+
+  /* Cuadrícula: 2 columnas en celular, más en pantallas grandes */
+  main { max-width: 1200px; margin: 0 auto; padding: 14px 16px 90px; }
+  .grilla { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 640px)  { .grilla { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+  @media (min-width: 960px)  { .grilla { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1200px) { .grilla { grid-template-columns: repeat(5, 1fr); } }
+  .producto {
+    display: flex; flex-direction: column;
+    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px;
+    overflow: hidden; text-align: left; padding: 0; color: inherit;
+    transition: box-shadow .15s, transform .15s;
+  }
+  .producto:hover { box-shadow: 0 6px 18px rgba(55,59,68,.12); transform: translateY(-2px); }
+  .producto .foto { aspect-ratio: 1; background: #fff; display: flex; position: relative; }
+  .condicion {
+    position: absolute; top: 8px; left: 8px;
+    background: var(--negro); color: #fff; font-size: 12px; font-weight: 600;
+    padding: 3px 8px; border-radius: 6px;
+  }
+  .condicion.nuevo { background: var(--naranja); }
+  .producto .foto img { width: 100%; height: 100%; object-fit: contain; }
+  .producto .datos { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .producto .titulo {
+    font-size: 14px; line-height: 1.3; margin: 0;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .precio { font-weight: 800; font-size: 19px; color: var(--naranja-oscuro); margin-top: auto; }
+  .vacio { text-align: center; color: var(--gris); padding: 40px 0; }
+
+  /* Ficha del producto: pantalla completa en celular, ventana en PC */
+  .ficha {
+    position: fixed; inset: 0; z-index: 20; display: none;
+    background: rgba(30,32,38,.55);
+  }
+  .ficha.abierta { display: flex; align-items: center; justify-content: center; }
+  .caja-ficha {
+    background: var(--tarjeta); width: 100%; height: 100%;
+    overflow-y: auto; position: relative;
+  }
+  @media (min-width: 760px) {
+    .caja-ficha {
+      width: min(920px, 92vw); height: auto; max-height: 90vh; border-radius: 18px;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cerrar {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    width: 40px; height: 40px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,.92); color: var(--negro); font-size: 22px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.2);
+  }
+  .galeria {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    aspect-ratio: 1; background: #fff;
+  }
+  .galeria::-webkit-scrollbar { display: none; }
+  .galeria img { flex: none; width: 100%; height: 100%; object-fit: contain; scroll-snap-align: center; }
+  .puntos { display: flex; justify-content: center; gap: 6px; padding: 8px 0 0; min-height: 18px; }
+  .puntos span { width: 7px; height: 7px; border-radius: 50%; background: var(--borde); }
+  .puntos span.activo { background: var(--naranja); }
+  .texto-ficha { padding: 14px 18px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .texto-ficha h2 { margin: 0; font-size: 20px; line-height: 1.3; }
+  .texto-ficha .precio { font-size: 26px; margin: 0; }
+  .estado { margin: 0; font-size: 15px; }
+  .estado b { color: var(--naranja-oscuro); }
+  .nota-estado {
+    margin: 0; font-size: 14px; line-height: 1.4;
+    background: #FFF4EC; border-left: 3px solid var(--naranja); padding: 8px 10px; border-radius: 6px;
+  }
+  .etiquetas { display: flex; gap: 6px; flex-wrap: wrap; font-size: 13px; }
+  .etiquetas span { background: var(--fondo); border-radius: 6px; padding: 4px 8px; color: var(--gris); }
+  .descripcion { white-space: pre-line; line-height: 1.5; margin: 0; }
+  .pie-ficha {
+    white-space: pre-line; line-height: 1.6; font-size: 14px; color: var(--gris);
+    border-top: 1px solid var(--borde); padding-top: 10px; margin: 0;
+  }
+  .boton-wa {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--naranja); color: #fff; text-decoration: none; font-weight: 700;
+    padding: 14px; border-radius: 12px; font-size: 17px;
+  }
+  .boton-wa:hover { background: var(--naranja-oscuro); }
+  .boton-wa svg { width: 22px; height: 22px; fill: currentColor; }
+
+  /* Botón flotante de WhatsApp */
+  .flotante {
+    position: fixed; right: 16px; bottom: 16px; z-index: 15;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--verde-wa); display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  }
+  .flotante svg { width: 32px; height: 32px; fill: #fff; }
+
+  footer { background: var(--negro); color: #e5e5e5; padding: 24px 16px 90px; }
+  footer .dentro { max-width: 1200px; margin: 0 auto; white-space: pre-line; line-height: 1.7; font-size: 14px; }
+  footer strong { color: var(--naranja); font-size: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="fila-logo">
+    <img src="logo.webp" alt="Javi Ofertas">
+    <span class="total" id="total"></span>
+  </div>
+  <div class="filtros">
+    <div class="buscador">
+      <input id="buscar" type="search" placeholder="🔎 Buscar producto..." autocomplete="off">
+    </div>
+    <div class="categorias">
+      <select id="categorias" aria-label="Categoría">
+        <option value="">📂 Todas las categorías (117)</option>
+        
+        <option value="Audio">Audio (4)</option>
+        
+        <option value="Auto y moto">Auto y moto (6)</option>
+        
+        <option value="Baño y grifería">Baño y grifería (1)</option>
+        
+        <option value="Bebé">Bebé (1)</option>
+        
+        <option value="Belleza y cabello">Belleza y cabello (6)</option>
+        
+        <option value="Bolsos y estuches">Bolsos y estuches (4)</option>
+        
+        <option value="Cables y adaptadores">Cables y adaptadores (7)</option>
+        
+        <option value="Cámaras y foto">Cámaras y foto (2)</option>
+        
+        <option value="Cargadores y fuentes">Cargadores y fuentes (9)</option>
+        
+        <option value="Celular y tablet">Celular y tablet (6)</option>
+        
+        <option value="Cocina">Cocina (10)</option>
+        
+        <option value="Computación">Computación (2)</option>
+        
+        <option value="Cuidado personal">Cuidado personal (1)</option>
+        
+        <option value="Decoración">Decoración (4)</option>
+        
+        <option value="Deportes y fitness">Deportes y fitness (2)</option>
+        
+        <option value="Electricidad y hogar inteligente">Electricidad y hogar inteligente (3)</option>
+        
+        <option value="Electrodomésticos">Electrodomésticos (1)</option>
+        
+        <option value="Ferretería">Ferretería (3)</option>
+        
+        <option value="Fiesta">Fiesta (1)</option>
+        
+        <option value="Fumadores">Fumadores (1)</option>
+        
+        <option value="Gaming y consolas">Gaming y consolas (5)</option>
+        
+        <option value="Herramientas">Herramientas (6)</option>
+        
+        <option value="Iluminación">Iluminación (6)</option>
+        
+        <option value="Jardín y piscina">Jardín y piscina (7)</option>
+        
+        <option value="Juguetes">Juguetes (3)</option>
+        
+        <option value="Limpieza y aspiradoras">Limpieza y aspiradoras (2)</option>
+        
+        <option value="Mascotas">Mascotas (1)</option>
+        
+        <option value="Papelería y manualidades">Papelería y manualidades (2)</option>
+        
+        <option value="Pilas y baterías">Pilas y baterías (4)</option>
+        
+        <option value="Relojes y joyería">Relojes y joyería (1)</option>
+        
+        <option value="Salud">Salud (1)</option>
+        
+        <option value="Textil hogar">Textil hogar (2)</option>
+        
+        <option value="Otros">Otros (3)</option>
+        
+      </select>
+    </div>
+    
+  </div>
+</header>
+
+<main>
+  <div class="grilla" id="grilla"></div>
+  <p class="vacio" id="vacio" hidden>No encontramos productos. Escríbenos por WhatsApp y te ayudamos 🙂</p>
+</main>
+
+<footer>
+  <div class="dentro"><strong>Javi Ofertas</strong>
+</div>
+</footer>
+
+<div class="ficha" id="ficha">
+  <div class="caja-ficha">
+    <button class="cerrar" id="cerrar" aria-label="Cerrar">✕</button>
+    <div>
+      <div class="galeria" id="galeria"></div>
+      <div class="puntos" id="puntos"></div>
+    </div>
+    <div class="texto-ficha">
+      <h2 id="f-titulo"></h2>
+      <p class="precio" id="f-precio"></p>
+      <p class="estado">Condición: <b id="f-condicion"></b></p>
+      <p class="nota-estado" id="f-detalle" hidden></p>
+      <div class="etiquetas" id="f-etiquetas"></div>
+      <p class="descripcion" id="f-descripcion"></p>
+      <a class="boton-wa" id="f-wa" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><use href="#icono-wa"/></svg> Pedir por WhatsApp
+      </a>
+      <p class="pie-ficha"></p>
+    </div>
+  </div>
+</div>
+
+<a class="flotante" href="https://wa.me/59171503003" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><use href="#icono-wa"/></svg>
+</a>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icono-wa" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.2C2.2 6.6 6.6 2.2 12 2.2c2.6 0 5.1 1 6.9 2.9 1.8 1.8 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zm8.4-18.2C18.1 1.3 15.2 0 12 0 5.5 0 .1 5.3.1 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.3-1.7c1.7.9 3.7 1.4 5.7 1.4 6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.2z"/></symbol>
+</svg>
+
+<script>
+const PRODUCTOS = [{"categoria": "Otros", "codigo": "P-0903", "condicion": "Nuevo", "descripcion": "Tinte temporal en aerosol para cabello, se lava con champ\u00fa.\nContenido neto 2 oz (57 g). Fabricado en Espa\u00f1a, distribuido por Rubies II, LLC (NY, EE. UU.).\nLa tapa es verde; el color del spray se ve en el producto.\nEl envase puede explotar si se calienta; no exponer al calor.", "detalle": "", "fotos": ["fotos/P-0903_1.webp", "fotos/P-0903_2.webp", "fotos/P-0903_3.webp", "fotos/P-0903_4.webp"], "precio": 50, "titulo": "Spray para cabello de color brillante verde Rubies 57 g"}, {"categoria": "Otros", "codigo": "P-0902", "condicion": "Nuevo", "descripcion": "Vela arom\u00e1tica de tres mechas en vaso de vidrio con tapa protectora.\nPeso neto 14 oz (396 g), tiempo de quemado de 20 a 40 horas.\nNotas: manzana negra, pera de oto\u00f1o, canela y caramelo.", "detalle": "", "fotos": ["fotos/P-0902_1.webp", "fotos/P-0902_2.webp"], "precio": 120, "titulo": "Vela arom\u00e1tica HomeWorx Witch\u0027s Spell 396 g tres mechas"}, {"categoria": "Otros", "codigo": "P-0901", "condicion": "Nuevo", "descripcion": "Incluye paleta de 6 colores, esponja, 3 cremas de maquillaje (blanco, negro, verde), Creepy Skin 7 g, sangre falsa Vampire Blood 29,5 ml y aplicador.\nLavable con agua. Uso desde 14 a\u00f1os.", "detalle": "", "fotos": ["fotos/P-0901_1.webp", "fotos/P-0901_2.webp"], "precio": 120, "titulo": "Robies Complete Makeup Kit Halloween maquillaje"}, {"categoria": "Fumadores", "codigo": "P-0442", "condicion": "Nuevo", "descripcion": "Caja hexagonal de cer\u00e1mica o metal azul turquesa con tapa de madera de bamb\u00fa.", "detalle": "", "fotos": ["fotos/P-0442_1.webp"], "precio": 100, "titulo": "Caja hexagonal azul con tapa de bamb\u00fa"}, {"categoria": "Auto y moto", "codigo": "P-0429", "condicion": "Nuevo", "descripcion": "Receptor de audio Bluetooth en caja blanca, con clip y salida de audio de 3,5 mm.", "detalle": "", "fotos": ["fotos/P-0429_1.webp"], "precio": 150, "titulo": "Receptor Bluetooth 1Mii Wireless Receiver para audio"}, {"categoria": "Cocina", "codigo": "P-0424", "condicion": "Nuevo", "descripcion": "Cuchilla met\u00e1lica de 4 aspas con eje roscado y sello verde, para vaso de licuadora; envuelta en pl\u00e1stico.", "detalle": "", "fotos": ["fotos/P-0424_1.webp"], "precio": 280, "titulo": "Cuchilla para licuadora con base de rosca verde"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0420", "condicion": "Nuevo", "descripcion": "Cargador de pared negro con dos puertos USB-C, salida total 40 W, entrada 100-240 V.", "detalle": "Rayones leves en la carcasa", "fotos": ["fotos/P-0420_1.webp"], "precio": 80, "titulo": "Cargador doble USB-C 40W UBCH382 negro"}, {"categoria": "Relojes y joyer\u00eda", "codigo": "P-0419", "condicion": "Nuevo", "descripcion": "Reloj de pulsera dorado con correa de malla de acero y esfera simple, en caja negra de regalo.", "detalle": "", "fotos": ["fotos/P-0419_1.webp"], "precio": 250, "titulo": "Reloj Kubagom dorado de malla milanesa para mujer"}, {"categoria": "Herramientas", "codigo": "P-0412", "condicion": "Nuevo", "descripcion": "Medidor l\u00e1ser de distancia de 50 m con pantalla LCD, niveles de burbuja y funciones de \u00e1rea y volumen.", "detalle": "", "fotos": ["fotos/P-0412_1.webp"], "precio": 250, "titulo": "Medidor l\u00e1ser de distancia Bauihr SW-TG50 50 m"}, {"categoria": "Mascotas", "codigo": "P-0407", "condicion": "Nuevo", "descripcion": "Almohadilla calefactora para perros y gatos, 60x45 cm, con termostato de 25\u00b0C a 55\u00b0C.", "detalle": "", "fotos": ["fotos/P-0407_1.webp"], "precio": 280, "titulo": "Almohadilla calefactora para mascotas 60x45 cm con termostato"}, {"categoria": "Deportes y fitness", "codigo": "P-0234", "condicion": "Nuevo", "descripcion": "Eje o palanca de liberaci\u00f3n r\u00e1pida para bicicleta, marca Wiley, en caja negra.", "detalle": "", "fotos": ["fotos/P-0234_1.webp"], "precio": 45, "titulo": "Wiley Quick-Release para bicicleta, caja negra"}, {"categoria": "Limpieza y aspiradoras", "codigo": "P-0045", "condicion": "Nuevo", "descripcion": "Rodillo de cerdas en espiral con eje rojo pl\u00e1stico, para aspiradora de suelo; largo aproximado 25 cm.", "detalle": "", "fotos": ["fotos/P-0045_1.webp"], "precio": 40, "titulo": "Cepillo rodillo repuesto para aspiradora, rojo y morado"}, {"categoria": "Cables y adaptadores", "codigo": "P-0034", "condicion": "Nuevo", "descripcion": "Dos antenas negras fijas en base octogonal, cable coaxial largo con conector SMA dorado.", "detalle": "", "fotos": ["fotos/P-0034_1.webp"], "precio": 120, "titulo": "Antena WiFi dual con base magn\u00e9tica y cable SMA"}, {"categoria": "Fiesta", "codigo": "P-0022", "condicion": "Nuevo", "descripcion": "Guirnalda de luces LED blancas c\u00e1lidas en alambre plateado, con conectores blancos y ganchos de sujeci\u00f3n.", "detalle": "", "fotos": ["fotos/P-0022_1.webp"], "precio": 120, "titulo": "Guirnalda de luces LED alambre plateado con enchufe USB"}, {"categoria": "Juguetes", "codigo": "P-0223", "condicion": "Nuevo", "descripcion": "Juguete saltar\u00edn tipo hipop\u00f3tamo para ni\u00f1os desde 18 meses, con caja de cart\u00f3n.", "detalle": "", "fotos": ["fotos/P-0223_1.webp"], "precio": 210, "titulo": "Animal Hopper Yomee Toys juguete saltar\u00edn para ni\u00f1os"}, {"categoria": "Herramientas", "codigo": "P-0215", "condicion": "Nuevo", "descripcion": "Disco abrasivo gris con soporte azul y v\u00e1stago met\u00e1lico para montar en taladro o rotativa.", "detalle": "", "fotos": ["fotos/P-0215_1.webp"], "precio": 40, "titulo": "Piedra de afilar disco azul con eje para taladro"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0363", "condicion": "Nuevo", "descripcion": "Calefactor a parafina para mini invernadero, con asa integrada y protecci\u00f3n contra heladas.", "detalle": "Caja con desgaste y esquinas da\u00f1adas", "fotos": ["fotos/P-0363_1.webp"], "precio": 90, "titulo": "Parasene Calefactor a parafina para invernadero"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0361", "condicion": "Nuevo", "descripcion": "Controlador RGB para tira LED con mando de radiofrecuencia 2.4G, alcance aprox. 30 m. Caja original.", "detalle": "", "fotos": ["fotos/P-0361_1.webp"], "precio": 100, "titulo": "Controlador RGB LED Miboxer FUT037 2.4G RF"}, {"categoria": "Belleza y cabello", "codigo": "P-0349", "condicion": "Nuevo", "descripcion": "Depilador de nanocristal blanco de superficie lisa y forma rectangular, sobre tapete de silicona con regla.", "detalle": "", "fotos": ["fotos/P-0349_1.webp"], "precio": 30, "titulo": "Depilador de nanocristal exfoliante blanco"}, {"categoria": "Ferreter\u00eda", "codigo": "P-0898", "condicion": "Nuevo", "descripcion": "Juego de ruedas giratorias de nylon con v\u00e1stago roscado met\u00e1lico, envueltas individualmente en pl\u00e1stico.", "detalle": "", "fotos": ["fotos/P-0898_1.webp"], "precio": 100, "titulo": "Ruedas giratorias con v\u00e1stago para silla de oficina, juego de 5"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0536", "condicion": "Nuevo", "descripcion": "Flotador inflable azul con inflador manual incluido, en bolsa pl\u00e1stica sellada.", "detalle": "", "fotos": ["fotos/P-0536_1.webp"], "precio": 130, "titulo": "Flotador inflable azul con inflador de piscina"}, {"categoria": "Textil hogar", "codigo": "P-0324", "condicion": "Nuevo", "descripcion": "Manta el\u00e9ctrica de felpa gris con 9 niveles de calor y temporizador de 1 a 9 horas, lavable en m\u00e1quina.", "detalle": "", "fotos": ["fotos/P-0324_1.webp"], "precio": 450, "titulo": "Manta el\u00e9ctrica Dreamcatcher Premium gris de felpa 9 niveles"}, {"categoria": "Ba\u00f1o y grifer\u00eda", "codigo": "P-0321", "condicion": "Nuevo", "descripcion": "Grifo de cocina cromado de dos manijas, ca\u00f1o alto giratorio, con conexiones de lat\u00f3n roscadas; mide unas 8 pulgadas entre conexiones.", "detalle": "", "fotos": ["fotos/P-0321_1.webp"], "precio": 140, "titulo": "Grifo de cocina cromado de dos manijas con ca\u00f1o alto giratorio"}, {"categoria": "Beb\u00e9", "codigo": "P-0318", "condicion": "Nuevo", "descripcion": "Babero de silicona para beb\u00e9s de 6 meses en adelante, en caja amarilla con dise\u00f1o rosa y azul.", "detalle": "", "fotos": ["fotos/P-0318_1.webp"], "precio": 100, "titulo": "Babero de silicona para beb\u00e9 Daaupus 6+ meses"}, {"categoria": "Decoraci\u00f3n", "codigo": "P-0032", "condicion": "Nuevo", "descripcion": "Coraz\u00f3n de cristal transparente con frase grabada en ingl\u00e9s, en caja azul con interior de sat\u00e9n.", "detalle": "", "fotos": ["fotos/P-0032_1.webp"], "precio": 110, "titulo": "Coraz\u00f3n de cristal grabado con frase de amor en caja de regalo"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0668", "condicion": "Nuevo", "descripcion": "Fuente de poder externa negra con cable de salida y clavija tipo UK, entrada 100-240V.", "detalle": "", "fotos": ["fotos/P-0668_1.webp"], "precio": 120, "titulo": "Adaptador de corriente AC/DC 34V 0.8A modelo 3408"}, {"categoria": "C\u00e1maras y foto", "codigo": "P-0390", "condicion": "Nuevo", "descripcion": "Aro de luz LED de 12 pulgadas con soporte para celular y tr\u00edpode incluido.", "detalle": "", "fotos": ["fotos/P-0390_1.webp"], "precio": 320, "titulo": "Aro de luz LED Tonor TRL-20 12\" con tr\u00edpode"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0257", "condicion": "Nuevo", "descripcion": "Proyector de estrellas y luz nocturna con bluetooth, control por Wi-Fi y app inteligente, en caja de cart\u00f3n.", "detalle": "", "fotos": ["fotos/P-0257_1.webp"], "precio": 170, "titulo": "Proyector estrellas Wi-Fi con bluetooth y app"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0219", "condicion": "Nuevo", "descripcion": "Base de carga inal\u00e1mbrica 5 en 1 para tel\u00e9fono, reloj inteligente y aud\u00edfonos; soporta PD y QC3.0.", "detalle": "", "fotos": ["fotos/P-0219_1.webp"], "precio": 210, "titulo": "Estaci\u00f3n de carga inal\u00e1mbrica 5 en 1 para celular, reloj y aud\u00edfonos"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0084", "condicion": "Nuevo", "descripcion": "L\u00e1mpara de mesa con ramas negras y rosas de espuma con luces LED de colores, base cuadrada y cable USB.", "detalle": "", "fotos": ["fotos/P-0084_1.webp"], "precio": 180, "titulo": "L\u00e1mpara de mesa \u00e1rbol con rosas LED multicolor"}, {"categoria": "Audio", "codigo": "P-0083", "condicion": "Nuevo", "descripcion": "Aud\u00edfonos over-ear rosados con orejas de gato, almohadillas grises y diadema acolchada.", "detalle": "", "fotos": ["fotos/P-0083_1.webp"], "precio": 580, "titulo": "Aud\u00edfonos gamer orejas de gato rosados con luz RGB"}, {"categoria": "Audio", "codigo": "P-0077", "condicion": "Nuevo", "descripcion": "Caja de desinfecci\u00f3n UV-C y secado r\u00e1pido para aud\u00edfonos, con luz LED azul y bot\u00f3n de encendido.", "detalle": "", "fotos": ["fotos/P-0077_1.webp"], "precio": 180, "titulo": "Blank desinfectante UV-C y deshumidificador para aud\u00edfonos"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0075", "condicion": "Nuevo", "descripcion": "Cargador de pared con cable y set de 7 puntas DC intercambiables, enchufe tipo UK.", "detalle": "", "fotos": ["fotos/P-0075_1.webp"], "precio": 60, "titulo": "Adaptador de corriente universal con 7 puntas"}, {"categoria": "Electrodom\u00e9sticos", "codigo": "P-0055", "condicion": "Nuevo", "descripcion": "Parrilla el\u00e9ctrica de mesa con cuerpo redondo antiadherente, dos asas y base calefactora central con cable.", "detalle": "", "fotos": ["fotos/P-0055_1.webp"], "precio": 280, "titulo": "Parrilla el\u00e9ctrica coreana antiadherente con base de calentamiento"}, {"categoria": "Cocina", "codigo": "P-0054", "condicion": "Nuevo", "descripcion": "Cepillo de cerdas naturales con mango de madera de nogal y virola de acero inoxidable, para limpiar molinillos de caf\u00e9.", "detalle": "", "fotos": ["fotos/P-0054_1.webp"], "precio": 80, "titulo": "Cepillo para molinillo de caf\u00e9 con mango de nogal"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0040", "condicion": "Nuevo", "descripcion": "Aspersor circular de pl\u00e1stico verde con brazo giratorio, divisor de dos v\u00edas con llaves y conectores r\u00e1pidos para manguera.", "detalle": "", "fotos": ["fotos/P-0040_1.webp"], "precio": 90, "titulo": "Aspersor giratorio de jard\u00edn con divisor de agua y conectores"}, {"categoria": "Cocina", "codigo": "P-0039", "condicion": "Nuevo", "descripcion": "Cuchillo de mesa de acero inoxidable con hoja serrada y mango met\u00e1lico; caja de cart\u00f3n azul.", "detalle": "Caja da\u00f1ada y rota en un costado; el producto se ve sin defectos.", "fotos": ["fotos/P-0039_1.webp"], "precio": 220, "titulo": "Cuchillo de carne Nuovva acero inoxidable con filo serrado"}, {"categoria": "Belleza y cabello", "codigo": "P-0038", "condicion": "Nuevo", "descripcion": "Difusor plegable de pl\u00e1stico rosa y negro, compatible con secadoras de 1.96 a 2.63 pulgadas de boquilla.", "detalle": "", "fotos": ["fotos/P-0038_1.webp"], "precio": 120, "titulo": "Difusor universal plegable para secadora de pelo"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0037", "condicion": "Nuevo", "descripcion": "Cable USB con base magn\u00e9tica para cargar smartwatch, 1 metro, en caja sellada.", "detalle": "", "fotos": ["fotos/P-0037_1.webp"], "precio": 90, "titulo": "Cable de carga magn\u00e9tico para smartwatch 1m USB"}, {"categoria": "Papeler\u00eda y manualidades", "codigo": "P-0036", "condicion": "Nuevo", "descripcion": "Set de 5 plumas fuente de metal mate en colores degradados, punta fina 0.38 mm, en bolsa transparente.", "detalle": "", "fotos": ["fotos/P-0036_1.webp"], "precio": 150, "titulo": "Set 5 plumas fuente mate punta fina 0.38mm"}, {"categoria": "Belleza y cabello", "codigo": "P-0035", "condicion": "Nuevo", "descripcion": "Masajeador facial blanco de enfriamiento para poros y piel irritada, set de 2 piezas, con punta met\u00e1lica.", "detalle": "", "fotos": ["fotos/P-0035_1.webp"], "precio": 90, "titulo": "Face Cooler masajeador facial fr\u00edo 2 pack blanco"}, {"categoria": "Decoraci\u00f3n", "codigo": "P-0027", "condicion": "Nuevo", "descripcion": "L\u00e1mina autoadhesiva con teselas cuadradas de efecto vidrio en azul, verde y morado, sobre base blanca.", "detalle": "", "fotos": ["fotos/P-0027_1.webp"], "precio": 120, "titulo": "L\u00e1mina adhesiva mosaico 3D azul verde para pared"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0024", "condicion": "Nuevo", "descripcion": "Set de accesorios azules para limpiar piscina: red recolectora, cepillo y tubo telesc\u00f3pico, en empaque sellado.", "detalle": "", "fotos": ["fotos/P-0024_1.webp"], "precio": 100, "titulo": "Kit de limpieza para piscina con red y cepillo"}, {"categoria": "Gaming y consolas", "codigo": "P-0018", "condicion": "Nuevo", "descripcion": "Base de carga para los controles Sense del PS VR2, de pl\u00e1stico negro; caja de cart\u00f3n.", "detalle": "", "fotos": ["fotos/P-0018_1.webp"], "precio": 90, "titulo": "Base de carga para control PS VR2 PlayStation"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0283", "condicion": "Nuevo", "descripcion": "Clip de pl\u00e1stico negro con cord\u00f3n el\u00e1stico y tope redondo, para sujetar cables o cordones.", "detalle": "", "fotos": ["fotos/P-0283_1.webp"], "precio": 90, "titulo": "Clip pl\u00e1stico negro con cord\u00f3n el\u00e1stico y tope"}, {"categoria": "Auto y moto", "codigo": "P-0280", "condicion": "Nuevo", "descripcion": "Funda de silicona negra para llave inteligente tipo BMW, con aro met\u00e1lico gris y llavero.", "detalle": "", "fotos": ["fotos/P-0280_1.webp"], "precio": 120, "titulo": "Funda de silicona y metal para llave BMW"}, {"categoria": "Decoraci\u00f3n", "codigo": "P-0278", "condicion": "Nuevo", "descripcion": "Marco circular negro con arena de colores que cambia de forma al inclinarlo; con base de soporte.", "detalle": "", "fotos": ["fotos/P-0278_1.webp"], "precio": 80, "titulo": "Cuadro de arena en movimiento con base negra, decorativo"}, {"categoria": "Limpieza y aspiradoras", "codigo": "P-0277", "condicion": "Nuevo", "descripcion": "Limpiador magn\u00e9tico de vidrio con cuerda, para ventanas de 4 a 30 mm de grosor, con almohadilla de microfibra.", "detalle": "", "fotos": ["fotos/P-0277_1.webp"], "precio": 100, "titulo": "Limpiador magn\u00e9tico de ventanas doble cara vidrio"}, {"categoria": "Papeler\u00eda y manualidades", "codigo": "P-0273", "condicion": "Nuevo", "descripcion": "Tubos de pintura acr\u00edlica fluorescente efecto luz negra, 75 ml cada uno, en blanco, amarillo, rosa, azul y verde.", "detalle": "", "fotos": ["fotos/P-0273_1.webp"], "precio": 170, "titulo": "Pinturas acr\u00edlicas ne\u00f3n Perfect Ideaz 75 ml set 5 colores UV"}, {"categoria": "Cocina", "codigo": "P-0272", "condicion": "Nuevo", "descripcion": "Cuatro cuchillos de mesa de acero inoxidable con mangos de madera oscura, dos negros y dos marrones.", "detalle": "", "fotos": ["fotos/P-0272_1.webp"], "precio": 250, "titulo": "Juego 4 cuchillos de mesa acero inoxidable mango madera"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0266", "condicion": "Nuevo", "descripcion": "Foco LED inteligente GU10 WiFi RGB, 5W, 400 l\u00famenes, compatible con Alexa y Google.", "detalle": "", "fotos": ["fotos/P-0266_1.webp"], "precio": 220, "titulo": "Antela Smart Bulb GU10 WiFi RGB pack 4 focos"}, {"categoria": "Herramientas", "codigo": "P-0250", "condicion": "Nuevo", "descripcion": "Dos conos escalonados de acero para partir le\u00f1a con taladro, con 4 adaptadores de v\u00e1stago SDS y estuche pl\u00e1stico.", "detalle": "", "fotos": ["fotos/P-0250_1.webp"], "precio": 240, "titulo": "Kit brocas c\u00f3nicas partir le\u00f1a con adaptadores SDS"}, {"categoria": "Celular y tablet", "codigo": "P-0740", "condicion": "Nuevo", "descripcion": "Funda protectora tipo libro con estampado de columnas de colores, para e-reader de 6 pulgadas.", "detalle": "", "fotos": ["fotos/P-0740_1.webp"], "precio": 70, "titulo": "Funda tipo libro para e-reader estampado arco\u00edris"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0665", "condicion": "Nuevo", "descripcion": "Adaptador de corriente switching de 19 V y 4,74 A (90 W), entrada AC 100-240 V, negro.", "detalle": "", "fotos": ["fotos/P-0665_1.webp"], "precio": 260, "titulo": "Cargador adaptador 19V 4.74A modelo SK90B190474"}, {"categoria": "Cocina", "codigo": "P-0521", "condicion": "Nuevo", "descripcion": "Platos cuadrados de cer\u00e1mica blanca con rayas azules pintadas a mano, cuatro piezas.", "detalle": "", "fotos": ["fotos/P-0521_1.webp"], "precio": 60, "titulo": "Set 4 platos cuadrados cer\u00e1mica blanca rayas azules"}, {"categoria": "Ferreter\u00eda", "codigo": "P-0508", "condicion": "Nuevo", "descripcion": "Perilla de puerta tipo bola en acabado negro mate, con cerradura de cilindro y dos llaves.", "detalle": "", "fotos": ["fotos/P-0508_1.webp"], "precio": 130, "titulo": "Perilla de puerta con llave negra, cerradura de cilindro"}, {"categoria": "Cables y adaptadores", "codigo": "P-0384", "condicion": "Nuevo", "descripcion": "Conmutador HDMI bidireccional 4K 60Hz 3D, modelo 4K2112A, para dos dispositivos.", "detalle": "", "fotos": ["fotos/P-0384_1.webp"], "precio": 100, "titulo": "Switch HDMI bidireccional VWRHAR 4K 60Hz 3D"}, {"categoria": "Herramientas", "codigo": "P-0376", "condicion": "Nuevo", "descripcion": "Medidor de humedad digital port\u00e1til para madera y materiales, con pantalla LCD y funci\u00f3n HOLD.", "detalle": "", "fotos": ["fotos/P-0376_1.webp"], "precio": 150, "titulo": "Medidor de humedad digital Neoteck NTK102 para madera"}, {"categoria": "Cables y adaptadores", "codigo": "P-0373", "condicion": "Nuevo", "descripcion": "Cable HDMI macho a macho de color negro con detalles rojos, en caja roja; largo aproximado de 3 m.", "detalle": "", "fotos": ["fotos/P-0373_1.webp"], "precio": 140, "titulo": "Cable HDMI negro con conectores dorados, en caja"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0308", "condicion": "Nuevo", "descripcion": "Cabezal de hilo tipo bump feed de pl\u00e1stico negro y naranja, con hilo de nylon incluido.", "detalle": "", "fotos": ["fotos/P-0308_1.webp"], "precio": 90, "titulo": "Cabezal de hilo para desbrozadora con carrete de nylon"}, {"categoria": "Decoraci\u00f3n", "codigo": "P-0290", "condicion": "Nuevo", "descripcion": "Piedra decorativa morada en frasco pl\u00e1stico de 500 g, para terrarios y macetas.", "detalle": "", "fotos": ["fotos/P-0290_1.webp"], "precio": 50, "titulo": "Piedra decorativa GiftDecor morada 500 g para terrarios"}, {"categoria": "Cocina", "codigo": "P-0224", "condicion": "Nuevo", "descripcion": "Base plana blanca con superficie calefactora circular, enchufe tipo UK de 3 pines y bot\u00f3n de encendido.", "detalle": "", "fotos": ["fotos/P-0224_1.webp"], "precio": 50, "titulo": "Calentador de tazas el\u00e9ctrico blanco con bot\u00f3n t\u00e1ctil"}, {"categoria": "Pilas y bater\u00edas", "codigo": "P-0191", "condicion": "Nuevo", "descripcion": "Bater\u00eda recargable de litio 18650, 3.7V, 3000mAh, 11.1Wh, cabeza convexa.", "detalle": "", "fotos": ["fotos/P-0191_1.webp"], "precio": 190, "titulo": "Pilas recargables Powobest 18650 3.7V 3000mAh"}, {"categoria": "Cocina", "codigo": "P-0114", "condicion": "Nuevo", "descripcion": "Set de 2 platos de porcelana new bone china, di\u00e1metro aprox. 21 cm, color rojo.", "detalle": "", "fotos": ["fotos/P-0114_1.webp"], "precio": 40, "titulo": "Set 2 platos porcelana Ernesto 21 cm"}, {"categoria": "Electricidad y hogar inteligente", "codigo": "P-0097", "condicion": "Nuevo", "descripcion": "Mecanismo met\u00e1lico con palanca, resorte y conector de 2 v\u00edas con cables negro y rojo; posiblemente para acelerador o cerradura.", "detalle": "", "fotos": ["fotos/P-0097_1.webp"], "precio": 500, "titulo": "Actuador electromec\u00e1nico met\u00e1lico con cables y conector"}, {"categoria": "Pilas y bater\u00edas", "codigo": "P-0095", "condicion": "Nuevo", "descripcion": "Bater\u00eda recargable de aspiradora inal\u00e1mbrica Dyson V6, color gris, con conector de encaje.", "detalle": "", "fotos": ["fotos/P-0095_1.webp"], "precio": 190, "titulo": "Bater\u00eda para aspiradora Dyson V6 gris"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0050", "condicion": "Nuevo", "descripcion": "Adaptador de corriente 140W, salida 20V 7A, con cables, color blanco.", "detalle": "", "fotos": ["fotos/P-0050_1.webp"], "precio": 220, "titulo": "Cargador XINZOKYC 140W USB-C A1800 para laptop"}, {"categoria": "Bolsos y estuches", "codigo": "P-0043", "condicion": "Nuevo", "descripcion": "Estuche r\u00edgido de tela negra con asa superior y correa de hombro, mide aprox. 30 cm de largo.", "detalle": "", "fotos": ["fotos/P-0043_1.webp"], "precio": 150, "titulo": "Estuche r\u00edgido negro con correa para parlante port\u00e1til"}, {"categoria": "Gaming y consolas", "codigo": "P-0030", "condicion": "Nuevo", "descripcion": "Almohadilla facial de cuero para gafas VR PICO 4, modelo N4FC1, con caja original.", "detalle": "Caja con esquina y tapa da\u00f1adas.", "fotos": ["fotos/P-0030_1.webp"], "precio": 70, "titulo": "Almohadilla facial de cuero VR para PICO 4 (N4FC1)"}, {"categoria": "Gaming y consolas", "codigo": "P-0016", "condicion": "Nuevo", "descripcion": "Adaptador Bluetooth de audio HiFi, nuevo, en caja; transmisor y receptor para equipos con audio.", "detalle": "", "fotos": ["fotos/P-0016_1.webp"], "precio": 120, "titulo": "Receptor Bluetooth GuliKit Route Air aptdX HD audio"}, {"categoria": "Cables y adaptadores", "codigo": "P-0014", "condicion": "Nuevo", "descripcion": "Conmutador HDMI compacto de 3 entradas a 1 salida con bot\u00f3n Select, en caja.", "detalle": "", "fotos": ["fotos/P-0014_1.webp"], "precio": 80, "titulo": "Duronic HDS3 Switch HDMI 3 entradas a 1 salida"}, {"categoria": "Salud", "codigo": "P-0001", "condicion": "Nuevo", "descripcion": "Faja lumbar de tela el\u00e1stica negra con franjas blancas y cierre de velcro ajustable.", "detalle": "", "fotos": ["fotos/P-0001_1.webp"], "precio": 100, "titulo": "Faja lumbar el\u00e1stica negra con cierre de velcro"}, {"categoria": "Pilas y bater\u00edas", "codigo": "P-0196", "condicion": "Nuevo", "descripcion": "Bater\u00eda recargable para c\u00e1mara digital, compatible con modelo CNP-150, en caja de cart\u00f3n con dos unidades.", "detalle": "", "fotos": ["fotos/P-0196_1.webp"], "precio": 200, "titulo": "Bater\u00eda DSTE compatible con c\u00e1mara CNP-150"}, {"categoria": "Audio", "codigo": "P-0195", "condicion": "Nuevo", "descripcion": "Pomp\u00f3n esponjoso de pelo sint\u00e9tico bicolor gris y negro, con bolsa zip de cierre.", "detalle": "", "fotos": ["fotos/P-0195_1.webp"], "precio": 70, "titulo": "Pomp\u00f3n de pelo sint\u00e9tico gris y negro para accesorios"}, {"categoria": "Herramientas", "codigo": "P-0204", "condicion": "Nuevo", "descripcion": "Set de 30 discos abrasivos de lija grano 240, \u00d8 aprox. 180 mm, con velcro para lijadoras de pared y piso.", "detalle": "", "fotos": ["fotos/P-0204_1.webp"], "precio": 120, "titulo": "Parkside Set 30 discos de lija grano 240 \u00d8180mm"}, {"categoria": "Belleza y cabello", "codigo": "P-0124", "condicion": "Nuevo", "descripcion": "Rizador de cabello cer\u00e1mico rotatorio de 1 pulgada, voltaje dual, con herramienta de limpieza.", "detalle": "", "fotos": ["fotos/P-0124_1.webp"], "precio": 250, "titulo": "Umate Rizador de cabello cer\u00e1mico rotatorio 1 pulgada"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0123", "condicion": "Nuevo", "descripcion": "L\u00e1mpara LED de luz blanca neutra 6500K, 9 W, 480 lm, con soporte plegable y bolsa de transporte.", "detalle": "", "fotos": ["fotos/P-0123_1.webp"], "precio": 150, "titulo": "L\u00e1mpara LED luz de d\u00eda Livarno Home 6500K 9W"}, {"categoria": "Audio", "codigo": "P-0122", "condicion": "Nuevo", "descripcion": "Micr\u00f3fono inal\u00e1mbrico en caja azul con im\u00e1genes de TV, meg\u00e1fono, consola y amplificador.", "detalle": "", "fotos": ["fotos/P-0122_1.webp"], "precio": 120, "titulo": "Micr\u00f3fono inal\u00e1mbrico sin marca visible, caja azul"}, {"categoria": "Cuidado personal", "codigo": "P-0121", "condicion": "Nuevo", "descripcion": "Pack de 8 cabezales de repuesto para cepillo el\u00e9ctrico Philips Sonicare, surtidos en blanco y negro.", "detalle": "La caja presenta desgaste en las esquinas y lados.", "fotos": ["fotos/P-0121_1.webp"], "precio": 100, "titulo": "Cabezales BetterChoi 8 pack para cepillo Philips Sonicare"}, {"categoria": "Cables y adaptadores", "codigo": "P-0111", "condicion": "Nuevo", "descripcion": "Cable HDMI negro de 6 pies con conectores HDMI, mini HDMI y micro HDMI, con puerto de alimentaci\u00f3n.", "detalle": "", "fotos": ["fotos/P-0111_1.webp"], "precio": 110, "titulo": "Cable HDMI multiconector onn. 6 ft negro con alimentaci\u00f3n"}, {"categoria": "Gaming y consolas", "codigo": "P-0108", "condicion": "Nuevo", "descripcion": "Control al\u00e1mbrico negro con dos palancas anal\u00f3gicas y conector tipo PS2.", "detalle": "", "fotos": ["fotos/P-0108_1.webp"], "precio": 70, "titulo": "Control CIPON compatible PS2 con cable, negro"}, {"categoria": "Belleza y cabello", "codigo": "P-0882", "condicion": "Nuevo", "descripcion": "Rizador de cabello de placas acanaladas doradas, mango morado y cable con enchufe tipo UK.", "detalle": "", "fotos": ["fotos/P-0882_1.webp"], "precio": 210, "titulo": "Rizador ondulador acanalado morado con cable"}, {"categoria": "Belleza y cabello", "codigo": "P-0880", "condicion": "Nuevo", "descripcion": "Rizador el\u00e9ctrico de tres ca\u00f1ones cer\u00e1micos para ondas al cabello, mango negro y cable con enchufe.", "detalle": "", "fotos": ["fotos/P-0880_1.webp"], "precio": 230, "titulo": "Rizador de cabello triple ca\u00f1\u00f3n el\u00e9ctrico ondas"}, {"categoria": "Auto y moto", "codigo": "P-0873", "condicion": "Nuevo", "descripcion": "Soporte magn\u00e9tico para rejilla de ventilaci\u00f3n del auto, compatible con MagSafe, con caja original.", "detalle": "", "fotos": ["fotos/P-0873_1.webp"], "precio": 80, "titulo": "Soporte magn\u00e9tico para auto Pitaka MagEZ Car Mount Lite"}, {"categoria": "Cables y adaptadores", "codigo": "P-0872", "condicion": "Nuevo", "descripcion": "Adaptador de cable corto con conector Mini DisplayPort macho y salida HDMI hembra 4K, cubierta trenzada gris.", "detalle": "", "fotos": ["fotos/P-0872_1.webp"], "precio": 90, "titulo": "Adaptador Mini DisplayPort a HDMI 4K trenzado"}, {"categoria": "Cocina", "codigo": "P-0684", "condicion": "Nuevo", "descripcion": "Bandeja rectangular de vidrio transparente con textura de l\u00edneas, con etiqueta de la marca Vivalto.", "detalle": "", "fotos": ["fotos/P-0684_1.webp"], "precio": 120, "titulo": "Bandeja de vidrio transparente Vivalto rectangular texturizada"}, {"categoria": "Cables y adaptadores", "codigo": "P-0379", "condicion": "Nuevo", "descripcion": "Rollo de cable para altavoz 18AWG de 25 metros, de cobre.", "detalle": "", "fotos": ["fotos/P-0379_1.webp"], "precio": 90, "titulo": "Cable de altavoz electrosmart 18AWG 25m"}, {"categoria": "Electricidad y hogar inteligente", "codigo": "P-0337", "condicion": "Nuevo", "descripcion": "Sensor inteligente Wi-Fi de temperatura y humedad, con control desde la app Govee Home.", "detalle": "", "fotos": ["fotos/P-0337_1.webp"], "precio": 280, "titulo": "Govee Sensor Wi-Fi de temperatura y humedad"}, {"categoria": "C\u00e1maras y foto", "codigo": "P-0093", "condicion": "Nuevo", "descripcion": "Filtro UV de 58 mm de la serie F de Artcise, en caja sellada, con recubrimiento multicapa.", "detalle": "", "fotos": ["fotos/P-0093_1.webp"], "precio": 90, "titulo": "Filtro UV Artcise 58mm serie F para c\u00e1mara"}, {"categoria": "Bolsos y estuches", "codigo": "P-0009", "condicion": "Nuevo", "descripcion": "Estuche r\u00edgido con cierre de cremallera, interior acolchado con compartimentos y bolsillo con malla de goma.", "detalle": "", "fotos": ["fotos/P-0009_1.webp"], "precio": 130, "titulo": "Estuche r\u00edgido con cierre y compartimentos BUVKE"}, {"categoria": "Gaming y consolas", "codigo": "P-0877", "condicion": "Nuevo", "descripcion": "Teclado inal\u00e1mbrico 2.4G para Xbox Series X|S y Xbox One, alcance de 8 a 10 m.", "detalle": "", "fotos": ["fotos/P-0877_1.webp"], "precio": 150, "titulo": "Teclado inal\u00e1mbrico Dobe para Xbox Series X|S y One"}, {"categoria": "Celular y tablet", "codigo": "P-0745", "condicion": "Nuevo", "descripcion": "Funda de cuero sint\u00e9tico negro con soporte interior para tablet de 10 pulgadas aprox., incluye sobre de gel silica.", "detalle": "", "fotos": ["fotos/P-0745_1.webp"], "precio": 80, "titulo": "Funda tipo libro negra para tablet con soporte"}, {"categoria": "Celular y tablet", "codigo": "P-0744", "condicion": "Nuevo", "descripcion": "Funda protectora de tapa con dise\u00f1o de dinosaurio azul en bicicleta, para e-reader tipo Kindle.", "detalle": "", "fotos": ["fotos/P-0744_1.webp"], "precio": 60, "titulo": "Funda infantil dinosaurio en bicicleta para Kindle"}, {"categoria": "Celular y tablet", "codigo": "P-0728", "condicion": "Nuevo", "descripcion": "Funda multifuncional beige para iPad y tablets, con soporte plegable; talla M.", "detalle": "", "fotos": ["fotos/P-0728_1.webp"], "precio": 70, "titulo": "Funda TrekStor SmartBag M para tablet beige"}, {"categoria": "Celular y tablet", "codigo": "P-0727", "condicion": "Nuevo", "descripcion": "Funda tipo folio con soporte frontal, cubierta de eco-cuero roja, para tablet Samsung Galaxy Tab A 10.1\".", "detalle": "", "fotos": ["fotos/P-0727_1.webp"], "precio": 80, "titulo": "Funda Tucano Gala Folio Samsung Galaxy Tab A 10.1 roja"}, {"categoria": "Celular y tablet", "codigo": "P-0725", "condicion": "Nuevo", "descripcion": "Funda tipo libro para tablet con estampado de ramas de almendro en flor, cierre con banda el\u00e1stica y asa.", "detalle": "", "fotos": ["fotos/P-0725_1.webp"], "precio": 140, "titulo": "Funda tablet estampado almendro en flor Van Gogh"}, {"categoria": "Cocina", "codigo": "P-0706", "condicion": "Nuevo", "descripcion": "Jarra t\u00e9rmica de 1 L (950 ml \u00fatiles), cuerpo blanco esmerilado y asa de madera; no apta para bebidas gaseosas.", "detalle": "", "fotos": ["fotos/P-0706_1.webp"], "precio": 110, "titulo": "Jarra t\u00e9rmica 1 L blanca con asa de madera"}, {"categoria": "Cocina", "codigo": "P-0705", "condicion": "Nuevo", "descripcion": "Cuchillo de carnicero de hoja forjada a mano con mango full tang, para cortar carne.", "detalle": "", "fotos": ["fotos/P-0705_1.webp"], "precio": 450, "titulo": "Cuchillo de carnicero XYj Full Tang Hoja Forjada a Mano"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0664", "condicion": "Nuevo", "descripcion": "Adaptador de corriente 12 V 3 A (36 W), entrada 100-240 V, con cable y enchufe UK.", "detalle": "", "fotos": ["fotos/P-0664_1.webp"], "precio": 180, "titulo": "Fuente de poder Neewer 12V 3A NW-120300D1"}, {"categoria": "Cargadores y fuentes", "codigo": "P-0661", "condicion": "Nuevo", "descripcion": "Cargador de bater\u00eda Li-ion con enchufe UK de tres patas, salida 26.1V 780mA, cable gris.", "detalle": "", "fotos": ["fotos/P-0661_1.webp"], "precio": 180, "titulo": "Cargador Li-ion 26.1V 780mA MX-261780C"}, {"categoria": "Ferreter\u00eda", "codigo": "P-0572", "condicion": "Nuevo", "descripcion": "Abrazaderas met\u00e1licas tipo T con tornillo, varias unidades en caja de cart\u00f3n, di\u00e1metro aprox. 5 cm.", "detalle": "", "fotos": ["fotos/P-0572_1.webp"], "precio": 140, "titulo": "Abrazaderas tipo T acero inoxidable en caja, varias medidas"}, {"categoria": "Iluminaci\u00f3n", "codigo": "P-0534", "condicion": "Nuevo", "descripcion": "Bombilla de filamento visible en vidrio \u00e1mbar, casquillo E26 de lat\u00f3n.", "detalle": "", "fotos": ["fotos/P-0534_1.webp"], "precio": 130, "titulo": "Bombilla Edison vintage ST64 filamento de carbono E26"}, {"categoria": "Auto y moto", "codigo": "P-0528", "condicion": "Nuevo", "descripcion": "Panel de interruptores de ventanas y retrovisores el\u00e9ctricos, pl\u00e1stico negro, lado conductor.", "detalle": "", "fotos": ["fotos/P-0528_1.webp"], "precio": 250, "titulo": "Panel de control de ventanas el\u00e9ctricas para auto"}, {"categoria": "Juguetes", "codigo": "P-0462", "condicion": "Nuevo", "descripcion": "Cubo m\u00e1gico 3x3x3 de competici\u00f3n, pack de 6 piezas seg\u00fan caja, pl\u00e1stico con etiquetas de colores.", "detalle": "", "fotos": ["fotos/P-0462_1.webp"], "precio": 170, "titulo": "Cubo Rubik 3x3 Speed Cube Magic Square 3+ a\u00f1os"}, {"categoria": "Electricidad y hogar inteligente", "codigo": "P-0372", "condicion": "Nuevo", "descripcion": "Regleta hexagonal con 4 tomas, 4 puertos USB (3 de 5V/2.4A y 1 de carga) y protecci\u00f3n contra sobretensi\u00f3n, cable de 1.8 m.", "detalle": "", "fotos": ["fotos/P-0372_1.webp"], "precio": 140, "titulo": "Regleta Hulker Six Corner P44U-UK con USB, 1.8 m"}, {"categoria": "Auto y moto", "codigo": "P-0368", "condicion": "Nuevo", "descripcion": "C\u00e1mara de retroceso para auto en caja negra, con etiqueta HD 1280x720p Rear View.", "detalle": "", "fotos": ["fotos/P-0368_1.webp"], "precio": 120, "titulo": "C\u00e1mara de retroceso para auto UHD HD 1280x720p"}, {"categoria": "Herramientas", "codigo": "P-0365", "condicion": "Nuevo", "descripcion": "Medidor de humedad digital port\u00e1til con pantalla LCD y sensor de madera, carcasa negra y amarilla.", "detalle": "", "fotos": ["fotos/P-0365_1.webp"], "precio": 270, "titulo": "Medidor de humedad digital MT270 para madera y paredes"}, {"categoria": "Textil hogar", "codigo": "P-0312", "condicion": "Nuevo", "descripcion": "Protector de colch\u00f3n individual 90x190 cm, superficie de bamb\u00fa 100%, impermeable e hipoalerg\u00e9nico.", "detalle": "Caja con marcas de desgaste y manchas en las esquinas", "fotos": ["fotos/P-0312_1.webp"], "precio": 130, "titulo": "Protector de colch\u00f3n Recci bamb\u00fa impermeable 90x190 cm"}, {"categoria": "Juguetes", "codigo": "P-0284", "condicion": "Nuevo", "descripcion": "Set de 2 walkie talkies infantiles con pantalla LCD, correas y manual incluidos; carcasa azul y rosa.", "detalle": "", "fotos": ["fotos/P-0284_1.webp"], "precio": 180, "titulo": "Walkie talkies para ni\u00f1os, set de 2 radios"}, {"categoria": "Auto y moto", "codigo": "P-0225", "condicion": "Nuevo", "descripcion": "Adaptador el\u00e9ctrico negro para conectar enchufes de remolque de 7 y 13 pines, con contactos dorados.", "detalle": "", "fotos": ["fotos/P-0225_1.webp"], "precio": 90, "titulo": "Adaptador enchufe remolque 7 a 13 pines el\u00e9ctrico"}, {"categoria": "Pilas y bater\u00edas", "codigo": "P-0087", "condicion": "Nuevo", "descripcion": "Pilas de bot\u00f3n de litio CR2430 de 3V, paquete de 10 unidades en caja negra.", "detalle": "", "fotos": ["fotos/P-0087_1.webp"], "precio": 90, "titulo": "Pilas de bot\u00f3n CR2430 3V paquete de 10 unidades"}, {"categoria": "Bolsos y estuches", "codigo": "P-0031", "condicion": "Nuevo", "descripcion": "Cartera plegable de textura carbono con costuras rojas, dentro de caja r\u00edgida negra con cierre dorado.", "detalle": "", "fotos": ["fotos/P-0031_1.webp"], "precio": 140, "titulo": "Cartera tipo carbono con caja negra y cierre dorado"}, {"categoria": "Deportes y fitness", "codigo": "P-0023", "condicion": "Nuevo", "descripcion": "Tacos de golf de rosca, 23 piezas plateadas, incluye llave.", "detalle": "", "fotos": ["fotos/P-0023_1.webp"], "precio": 60, "titulo": "Tacos de golf SOLM8 Soft Spikes plateados 23 piezas"}, {"categoria": "Computaci\u00f3n", "codigo": "P-0013", "condicion": "Nuevo", "descripcion": "Adaptador de soporte VESA para monitor Samsung, caja peque\u00f1a blanca sin modelo visible.", "detalle": "Caja con esquinas y pliegues visibles", "fotos": ["fotos/P-0013_1.webp"], "precio": 60, "titulo": "Adaptador VESA para monitor Samsung, soporte 3Dee"}, {"categoria": "Bolsos y estuches", "codigo": "P-0008", "condicion": "Nuevo", "descripcion": "Malet\u00edn de tela negra con cierre de cremallera, asas y correa de hombro para laptop de hasta 15 pulgadas.", "detalle": "", "fotos": ["fotos/P-0008_1.webp"], "precio": 100, "titulo": "Malet\u00edn para laptop Alfheim negro con asa y correa"}, {"categoria": "Computaci\u00f3n", "codigo": "P-0120", "condicion": "Nuevo", "descripcion": "Alfombrilla de escritorio con mapa del mundo en negro y gris, de 900 x 400 mm.", "detalle": "", "fotos": ["fotos/P-0120_1.webp"], "precio": 110, "titulo": "Mousepad XL mapa del mundo 900x400 mm"}, {"categoria": "Jard\u00edn y piscina", "codigo": "P-0426", "condicion": "Nuevo", "descripcion": "Medidor de humedad, pH, luz, temperatura del suelo e higr\u00f3metro ambiental, con sonda met\u00e1lica en caja.", "detalle": "", "fotos": ["fotos/P-0426_1.webp"], "precio": 150, "titulo": "Medidor de suelo 5 en 1 Soil Tester S-2 para plantas"}];
+const WHATSAPP = "59171503003";
+const $ = (id) => document.getElementById(id);
+let categoria = "";
+let condicion = "";
+// true si la ficha se abrió desde la grilla (y no con un link compartido)
+let abiertaAqui = false;
+
+// "Cámara" y "camara" cuentan igual al buscar
+const simple = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+for (const p of PRODUCTOS) p.busqueda = simple(`${p.titulo} ${p.descripcion} ${p.categoria} ${p.codigo}`);
+
+const enlaceWa = (p) =>
+  `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hola, me interesa ${p.codigo} ${p.titulo} (${p.precio} Bs)`)}`;
+
+function tarjeta(p) {
+  const b = document.createElement("button");
+  b.className = "producto";
+  b.innerHTML = `
+    <div class="foto"><img loading="lazy" alt=""><span class="condicion"></span></div>
+    <div class="datos"><p class="titulo"></p><span class="precio">${p.precio} Bs</span></div>`;
+  b.querySelector("img").src = p.fotos[0];
+  b.querySelector(".titulo").textContent = p.titulo;
+  const etiqueta = b.querySelector(".condicion");
+  etiqueta.textContent = p.condicion;
+  etiqueta.classList.toggle("nuevo", p.condicion === "Nuevo");
+  b.onclick = () => { abiertaAqui = true; location.hash = p.codigo; };
+  return b;
+}
+
+function mostrar() {
+  const palabras = simple($("buscar").value).split(/\s+/).filter(Boolean);
+  const lista = PRODUCTOS.filter((p) =>
+    (!categoria || p.categoria === categoria) && (!condicion || p.condicion === condicion) &&
+    palabras.every((w) => p.busqueda.includes(w)));
+  $("grilla").replaceChildren(...lista.map(tarjeta));
+  $("vacio").hidden = lista.length > 0;
+  $("total").textContent = `${lista.length} productos`;
+}
+
+$("buscar").addEventListener("input", mostrar);
+$("categorias").addEventListener("change", (e) => {
+  categoria = e.target.value;
+  window.scrollTo(0, 0);
+  mostrar();
+});
+
+$("condiciones")?.addEventListener("change", (e) => {
+  condicion = e.target.value;
+  window.scrollTo(0, 0);
+  mostrar();
+});
+
+// La ficha se abre con #P-0001 en la dirección: el botón Atrás del celular la cierra
+// y ese link se puede compartir para mostrar un producto directo
+function abrirFicha() {
+  const p = PRODUCTOS.find((x) => x.codigo === location.hash.slice(1));
+  $("ficha").classList.toggle("abierta", !!p);
+  document.body.style.overflow = p ? "hidden" : "";
+  if (!p) { abiertaAqui = false; return; }
+  $("galeria").replaceChildren(...p.fotos.map((f) => Object.assign(new Image(), { src: f, alt: "" })));
+  $("galeria").scrollLeft = 0;
+  $("puntos").replaceChildren(...(p.fotos.length > 1 ? p.fotos.map(() => document.createElement("span")) : []));
+  marcarPunto();
+  $("f-titulo").textContent = p.titulo;
+  $("f-precio").textContent = `${p.precio} Bs`;
+  $("f-condicion").textContent = p.condicion;
+  $("f-detalle").textContent = p.detalle ? `📝 ${p.detalle}` : "";
+  $("f-detalle").hidden = !p.detalle;
+  $("f-etiquetas").replaceChildren(...[p.categoria, p.codigo].filter(Boolean)
+    .map((t) => Object.assign(document.createElement("span"), { textContent: t })));
+  $("f-descripcion").textContent = p.descripcion;
+  $("f-wa").href = enlaceWa(p);
+}
+function marcarPunto() {
+  const g = $("galeria");
+  const i = Math.round(g.scrollLeft / (g.clientWidth || 1));
+  [...$("puntos").children].forEach((s, j) => s.classList.toggle("activo", i === j));
+}
+function cerrarFicha() {
+  if (abiertaAqui) history.back();
+  else { history.replaceState(null, "", location.pathname); abrirFicha(); }
+}
+$("galeria").addEventListener("scroll", marcarPunto);
+$("cerrar").onclick = cerrarFicha;
+$("ficha").addEventListener("click", (e) => { if (e.target === $("ficha")) cerrarFicha(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && location.hash) cerrarFicha(); });
+window.addEventListener("hashchange", abrirFicha);
+
+mostrar();
+abrirFicha();
+</script>
+</body>
+</html>

@@ -42,23 +42,22 @@
     max-width: 1200px; margin: 0 auto; padding: 10px 16px 8px;
   }
   .fila-logo img { height: 44px; width: auto; }
-  .fila-logo .total { margin-left: auto; color: var(--gris); font-size: 14px; }
   .buscador { max-width: 1200px; margin: 0 auto; padding: 0 16px 8px; }
   .buscador input {
     width: 100%; padding: 11px 14px; font-size: 16px;
-    border: 2px solid var(--borde); border-radius: 12px;
+    border: 2px solid var(--borde); border-radius: 8px;
     background: var(--fondo); color: var(--negro); outline: none;
   }
   .buscador input:focus { border-color: var(--naranja); background: #fff; }
   .categorias { max-width: 1200px; margin: 0 auto; padding: 0 16px 10px; }
   .categorias select {
-    width: 100%; padding: 10px 40px 10px 14px; font-size: 16px; font-weight: 600;
-    border: 2px solid var(--negro); border-radius: 12px; color: var(--negro);
+    width: 100%; padding: 10px 40px 10px 14px; font-size: 16px; font-weight: 500;
+    border: 2px solid var(--naranja); border-radius: 8px; color: #4B5160;
     appearance: none; -webkit-appearance: none; cursor: pointer;
     /* Flecha naranja dibujada a la derecha */
     background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23FF904E' stroke-width='2.5' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center;
   }
-  .categorias select:focus { outline: none; border-color: var(--naranja); }
+  .categorias select:focus { outline: none; border-color: var(--naranja-oscuro); }
   /* En pantallas anchas: buscador y categorías en la misma fila */
   @media (min-width: 760px) {
     .filtros { display: flex; gap: 12px; max-width: 1200px; margin: 0 auto; padding: 0 16px 10px; }
@@ -75,18 +74,12 @@
   @media (min-width: 1200px) { .grilla { grid-template-columns: repeat(5, 1fr); } }
   .producto {
     display: flex; flex-direction: column;
-    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 14px;
+    background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 8px;
     overflow: hidden; text-align: left; padding: 0; color: inherit;
     transition: box-shadow .15s, transform .15s;
   }
   .producto:hover { box-shadow: 0 6px 18px rgba(55,59,68,.12); transform: translateY(-2px); }
   .producto .foto { aspect-ratio: 1; background: #fff; display: flex; position: relative; }
-  .condicion {
-    position: absolute; top: 8px; left: 8px;
-    background: var(--negro); color: #fff; font-size: 12px; font-weight: 600;
-    padding: 3px 8px; border-radius: 6px;
-  }
-  .condicion.nuevo { background: var(--naranja); }
   .producto .foto img { width: 100%; height: 100%; object-fit: contain; }
   .producto .datos { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .producto .titulo {
@@ -108,7 +101,7 @@
   }
   @media (min-width: 760px) {
     .caja-ficha {
-      width: min(920px, 92vw); height: auto; max-height: 90vh; border-radius: 18px;
+      width: min(920px, 92vw); height: auto; max-height: 90vh; border-radius: 10px;
       display: grid; grid-template-columns: 1fr 1fr;
     }
   }
@@ -118,31 +111,41 @@
     background: rgba(255,255,255,.92); color: var(--negro); font-size: 22px;
     box-shadow: 0 1px 6px rgba(0,0,0,.2);
   }
+  .marco-galeria { position: relative; padding: 16px 16px 0; }
   .galeria {
     display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-    aspect-ratio: 1; background: #fff;
+    aspect-ratio: 1; background: #fff; border: 1px solid var(--borde); border-radius: 6px;
+    scroll-behavior: smooth;
   }
+  .flecha {
+    position: absolute; top: calc(50% + 8px); transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--borde);
+    background: rgba(255,255,255,.95); color: var(--negro); font-size: 20px; line-height: 1;
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  }
+  .flecha:hover { color: var(--naranja-oscuro); }
+  .flecha.izq { left: 24px; }
+  .flecha.der { right: 24px; }
+  .flecha[hidden] { display: none; }
   .galeria::-webkit-scrollbar { display: none; }
   .galeria img { flex: none; width: 100%; height: 100%; object-fit: contain; scroll-snap-align: center; }
   .puntos { display: flex; justify-content: center; gap: 6px; padding: 8px 0 0; min-height: 18px; }
-  .puntos span { width: 7px; height: 7px; border-radius: 50%; background: var(--borde); }
+  .puntos span { width: 9px; height: 9px; border-radius: 50%; background: var(--borde); cursor: pointer; }
   .puntos span.activo { background: var(--naranja); }
   .texto-ficha { padding: 14px 18px 24px; display: flex; flex-direction: column; gap: 10px; }
   .texto-ficha h2 { margin: 0; font-size: 20px; line-height: 1.3; }
   .texto-ficha .precio { font-size: 26px; margin: 0; }
-  .estado { margin: 0; font-size: 15px; }
-  .estado b { color: var(--naranja-oscuro); }
   .nota-estado {
     margin: 0; font-size: 14px; line-height: 1.4;
     background: #FFF4EC; border-left: 3px solid var(--naranja); padding: 8px 10px; border-radius: 6px;
   }
   .datos-tecnicos { margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  .datos-tecnicos div { background: var(--fondo); border-radius: 10px; padding: 10px 12px; }
+  .datos-tecnicos div { background: var(--fondo); border-radius: 6px; padding: 10px 12px; }
   .datos-tecnicos h3 { margin: 0 0 4px; font-size: 14px; }
   .datos-tecnicos p { margin: 0; white-space: pre-line; font-size: 14px; line-height: 1.5; }
   .mas-info {
     color: var(--negro); font-size: 14px; font-weight: 600; text-decoration: none;
-    border: 1px solid var(--borde); border-radius: 10px; padding: 9px 12px; text-align: center;
+    border: 1px solid var(--borde); border-radius: 6px; padding: 9px 12px; text-align: center;
   }
   .mas-info:hover { border-color: var(--naranja); color: var(--naranja-oscuro); }
   .etiquetas { display: flex; gap: 6px; flex-wrap: wrap; font-size: 13px; }
@@ -155,7 +158,7 @@
   .boton-wa {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     background: var(--naranja); color: #fff; text-decoration: none; font-weight: 700;
-    padding: 14px; border-radius: 12px; font-size: 17px;
+    padding: 14px; border-radius: 6px; font-size: 17px;
   }
   .boton-wa:hover { background: var(--naranja-oscuro); }
   .boton-wa svg { width: 22px; height: 22px; fill: currentColor; }
@@ -179,7 +182,6 @@
 <header>
   <div class="fila-logo">
     <img src="logo.webp" alt="Javi Ofertas">
-    <span class="total" id="total"></span>
   </div>
   <div class="filtros">
     <div class="buscador">
@@ -275,13 +277,16 @@
   <div class="caja-ficha">
     <button class="cerrar" id="cerrar" aria-label="Cerrar">✕</button>
     <div>
-      <div class="galeria" id="galeria"></div>
+      <div class="marco-galeria">
+        <div class="galeria" id="galeria"></div>
+        <button class="flecha izq" id="anterior" aria-label="Foto anterior">‹</button>
+        <button class="flecha der" id="siguiente" aria-label="Foto siguiente">›</button>
+      </div>
       <div class="puntos" id="puntos"></div>
     </div>
     <div class="texto-ficha">
       <h2 id="f-titulo"></h2>
       <p class="precio" id="f-precio"></p>
-      <p class="estado">Condición: <b id="f-condicion"></b></p>
       <p class="nota-estado" id="f-detalle" hidden></p>
       <div class="etiquetas" id="f-etiquetas"></div>
       <p class="descripcion" id="f-descripcion"></p>
@@ -323,13 +328,10 @@ function tarjeta(p) {
   const b = document.createElement("button");
   b.className = "producto";
   b.innerHTML = `
-    <div class="foto"><img loading="lazy" alt=""><span class="condicion"></span></div>
+    <div class="foto"><img loading="lazy" alt=""></div>
     <div class="datos"><p class="titulo"></p><span class="precio">${p.precio} Bs</span></div>`;
   b.querySelector("img").src = p.fotos[0];
   b.querySelector(".titulo").textContent = p.titulo;
-  const etiqueta = b.querySelector(".condicion");
-  etiqueta.textContent = p.condicion;
-  etiqueta.classList.toggle("nuevo", p.condicion === "Nuevo");
   b.onclick = () => { abiertaAqui = true; location.hash = p.codigo; };
   return b;
 }
@@ -341,7 +343,6 @@ function mostrar() {
     palabras.every((w) => p.busqueda.includes(w)));
   $("grilla").replaceChildren(...lista.map(tarjeta));
   $("vacio").hidden = lista.length > 0;
-  $("total").textContent = `${lista.length} productos`;
 }
 
 $("buscar").addEventListener("input", mostrar);
@@ -366,17 +367,21 @@ function abrirFicha() {
   if (!p) { abiertaAqui = false; return; }
   $("galeria").replaceChildren(...p.fotos.map((f) => Object.assign(new Image(), { src: f, alt: "" })));
   $("galeria").scrollLeft = 0;
-  $("puntos").replaceChildren(...(p.fotos.length > 1 ? p.fotos.map(() => document.createElement("span")) : []));
+  $("puntos").replaceChildren(...(p.fotos.length > 1 ? p.fotos.map((_, i) => {
+    const punto = document.createElement("span");
+    punto.onclick = () => irAFoto(i);
+    return punto;
+  }) : []));
   marcarPunto();
   $("f-titulo").textContent = p.titulo;
   $("f-precio").textContent = `${p.precio} Bs`;
-  $("f-condicion").textContent = p.condicion;
   $("f-detalle").textContent = p.detalle ? `📝 ${p.detalle}` : "";
   $("f-detalle").hidden = !p.detalle;
   $("f-etiquetas").replaceChildren(...[p.categoria, p.codigo].filter(Boolean)
     .map((t) => Object.assign(document.createElement("span"), { textContent: t })));
   $("f-descripcion").textContent = p.descripcion;
   $("f-tecnicos").replaceChildren(...[
+    ["✨ Condición", p.condicion],
     ["📏 Medidas", p.medidas], ["⚙️ Características", p.caracteristicas], ["🔧 Compatible con", p.compatible],
   ].filter(([, texto]) => texto).map(([titulo, texto]) => {
     const caja = document.createElement("div");
@@ -387,16 +392,34 @@ function abrirFicha() {
   $("f-wa").href = enlaceWa(p);
   $("f-info").href = `https://www.google.com/search?q=${encodeURIComponent(p.nombre)}`;
 }
-function marcarPunto() {
+function fotoActual() {
   const g = $("galeria");
-  const i = Math.round(g.scrollLeft / (g.clientWidth || 1));
+  return Math.round(g.scrollLeft / (g.clientWidth || 1));
+}
+function irAFoto(i) {
+  const g = $("galeria");
+  g.scrollTo({ left: i * g.clientWidth });
+}
+// Puntos y flechas según la foto que se ve; sin flechas si hay una sola foto
+function marcarPunto() {
+  const i = fotoActual();
+  const total = $("galeria").children.length;
   [...$("puntos").children].forEach((s, j) => s.classList.toggle("activo", i === j));
+  $("anterior").hidden = i <= 0;
+  $("siguiente").hidden = i >= total - 1;
 }
 function cerrarFicha() {
   if (abiertaAqui) history.back();
   else { history.replaceState(null, "", location.pathname); abrirFicha(); }
 }
 $("galeria").addEventListener("scroll", marcarPunto);
+$("anterior").onclick = () => irAFoto(fotoActual() - 1);
+$("siguiente").onclick = () => irAFoto(fotoActual() + 1);
+document.addEventListener("keydown", (e) => {
+  if (!location.hash) return;
+  if (e.key === "ArrowLeft") irAFoto(fotoActual() - 1);
+  if (e.key === "ArrowRight") irAFoto(fotoActual() + 1);
+});
 $("cerrar").onclick = cerrarFicha;
 $("ficha").addEventListener("click", (e) => { if (e.target === $("ficha")) cerrarFicha(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && location.hash) cerrarFicha(); });
